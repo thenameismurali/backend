@@ -17,8 +17,8 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error(err));
 
-// ✅ Import your routes
-const sessionRoutes = require('./routes/sessions');
+// ✅ Import your routes — note: singular!
+const sessionRoutes = require('./routes/session');
 
 // ✅ Mount your routes under /api
 app.use('/api', sessionRoutes);
@@ -30,4 +30,3 @@ app.get('/', (req, res) => {
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
-
