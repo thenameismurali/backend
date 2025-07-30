@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); 
 const router = express.Router();
 const Session = require('../models/Session');
 const auth = require('../middleware/auth');
@@ -71,3 +71,41 @@ router.post('/my-sessions/save-draft', auth, async (req, res) => {
         tags,
         json_file_url,
         user_id: req.user.id,
+        published: false,
+      });
+    }
+
+    await session.save();
+    res.json(session);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// ✅ PRIVATE — Publish session
+router.post('/my-sessions/publish', auth, async (req, res) => {
+  try {
+    const { _id } = req.body;
+
+    const session = await Session.findOne({
+      _id,
+      user_id: req.user.id,
+    });
+
+    if (!session) {
+      return res.status(404).json({ message: 'Session not found' });
+    }
+
+    session.published = true;
+    await session.save();
+
+    res.json({ message: 'Session published', session });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// ✅ ✅ ✅ MUST export the router!
+module.exports = router;
